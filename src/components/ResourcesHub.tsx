@@ -129,32 +129,32 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
     if (!modalType) return null;
     return (
       <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-[2.5rem] w-full max-w-lg p-10 shadow-2xl animate-in zoom-in duration-300">
+        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-lg p-10 shadow-2xl animate-in zoom-in duration-300 transition-colors">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-black text-slate-900 uppercase italic">
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic transition-colors">
               {editingItem ? 'Edit' : 'Add'} {modalType === 'link' ? 'Mission Tool' : modalType === 'campus' ? 'Campus Resource' : 'School Contact'}
             </h3>
-            <button onClick={closeModal} className="text-slate-400 hover:text-slate-900 transition-colors"><X size={24}/></button>
+            <button onClick={closeModal} className="text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"><X size={24}/></button>
           </div>
           <form className="space-y-6" onSubmit={handleSaveItem}>
             {modalType === 'link' && (
               <>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Tool Label</label>
-                  <input name="label" required defaultValue={editingItem?.label} placeholder="e.g. GitHub" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Tool Label</label>
+                  <input name="label" required defaultValue={editingItem?.label} placeholder="e.g. GitHub" className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Destination URL</label>
-                  <input name="url" required defaultValue={editingItem?.url} placeholder="https://..." className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Destination URL</label>
+                  <input name="url" required defaultValue={editingItem?.url} placeholder="https://..." className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Brief Description</label>
-                  <textarea name="desc" defaultValue={editingItem?.desc} className="w-full h-24 px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Brief Description</label>
+                  <textarea name="desc" defaultValue={editingItem?.desc} className="w-full h-24 px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Accent Color</label>
-                  <select name="color" defaultValue={editingItem?.color || 'bg-blue-500'} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold">
-                    {COLOR_OPTIONS.map(c => <option key={c} value={c}>{c.replace('bg-', '')}</option>)}
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Accent Color</label>
+                  <select name="color" defaultValue={editingItem?.color || 'bg-blue-500'} className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold dark:text-white transition-all">
+                    {COLOR_OPTIONS.map(c => <option key={c} value={c} className="dark:bg-slate-900">{c.replace('bg-', '')}</option>)}
                   </select>
                 </div>
               </>
@@ -163,22 +163,22 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
             {modalType === 'campus' && (
               <>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Facility Name</label>
-                  <input name="title" required defaultValue={editingItem?.title} placeholder="e.g. Makerspace" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Facility Name</label>
+                  <input name="title" required defaultValue={editingItem?.title} placeholder="e.g. Makerspace" className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Contact Email/Phone</label>
-                    <input name="contact" defaultValue={editingItem?.contact} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Contact Email/Phone</label>
+                    <input name="contact" defaultValue={editingItem?.contact} className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold dark:text-white transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Location</label>
-                    <input name="loc" defaultValue={editingItem?.loc} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Location</label>
+                    <input name="loc" defaultValue={editingItem?.loc} className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold dark:text-white transition-all" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Service Detail</label>
-                  <textarea name="desc" defaultValue={editingItem?.desc} className="w-full h-24 px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Service Detail</label>
+                  <textarea name="desc" defaultValue={editingItem?.desc} className="w-full h-24 px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white transition-all" />
                 </div>
               </>
             )}
@@ -186,22 +186,22 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
             {modalType === 'contact' && (
               <>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
-                  <input name="name" required defaultValue={editingItem?.name} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Full Name</label>
+                  <input name="name" required defaultValue={editingItem?.name} className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Role/Title</label>
-                    <input name="role" defaultValue={editingItem?.role} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Role/Title</label>
+                    <input name="role" defaultValue={editingItem?.role} className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold dark:text-white transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Department</label>
-                    <input name="dept" defaultValue={editingItem?.dept} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Department</label>
+                    <input name="dept" defaultValue={editingItem?.dept} className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold dark:text-white transition-all" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">UBC Email</label>
-                  <input name="email" type="email" required defaultValue={editingItem?.email} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">UBC Email</label>
+                  <input name="email" type="email" required defaultValue={editingItem?.email} className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold dark:text-white transition-all" />
                 </div>
               </>
             )}
@@ -228,13 +228,13 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {renderModal()}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 transition-colors">
         <div>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">RESOURCES HUB</h2>
-          <p className="text-slate-500 font-medium">The tactical directory, mission tools, and campus support network.</p>
+          <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic transition-colors">RESOURCES HUB</h2>
+          <p className="text-slate-500 dark:text-slate-400 font-medium transition-colors">The tactical directory, mission tools, and campus support network.</p>
         </div>
         
-        <div className="flex p-1 bg-slate-200/50 rounded-2xl w-fit">
+        <div className="flex p-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-2xl w-fit transition-colors">
           {[
             { id: 'directory', label: 'Directory', icon: <Users size={16} /> },
             { id: 'tools', label: 'Mission Tools', icon: <Wrench size={16} /> },
@@ -243,7 +243,7 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'}`}
             >
               {tab.icon} {tab.label}
             </button>
@@ -255,39 +255,39 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
               <input 
                 type="text" 
                 placeholder="Search command personnel by name or role..."
-                className="w-full pl-12 pr-6 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all"
+                className="w-full pl-12 pr-6 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all dark:text-white"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <div className="relative">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 transition-colors" size={18} />
               <select 
-                className="w-full pl-12 pr-6 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 shadow-sm appearance-none font-bold text-sm"
+                className="w-full pl-12 pr-6 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 shadow-sm appearance-none font-bold text-sm dark:text-white transition-all cursor-pointer"
                 value={tagFilter}
                 onChange={(e) => setTagFilter(e.target.value)}
               >
-                {allTags.map(t => <option key={t} value={t}>{t}</option>)}
+                {allTags.map(t => <option key={t} value={t} className="dark:bg-slate-900">{t}</option>)}
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map(user => (
-              <div key={user.id} className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/50 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110" />
+              <div key={user.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/50 dark:bg-blue-900/10 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110" />
                 
                 <div className="flex items-start gap-4 mb-6 relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-blue-200">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all">
                     {user.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-slate-900 truncate">{user.name}</h4>
-                    <p className={`text-[10px] font-black uppercase tracking-widest ${user.role === UserRole.EXECUTIVE ? 'text-rose-500' : 'text-blue-500'}`}>
+                    <h4 className="font-bold text-slate-900 dark:text-white truncate transition-colors">{user.name}</h4>
+                    <p className={`text-[10px] font-black uppercase tracking-widest transition-colors ${user.role === UserRole.EXECUTIVE ? 'text-rose-500' : 'text-blue-500'}`}>
                       {user.role}
                     </p>
                   </div>
@@ -296,28 +296,28 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
                 <div className="space-y-4 relative">
                   <div className="flex flex-wrap gap-1">
                     {user.tags.map(tag => (
-                      <span key={tag} className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-black uppercase rounded-lg border border-slate-200">
+                      <span key={tag} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[9px] font-black uppercase rounded-lg border border-slate-200 dark:border-slate-700 transition-colors">
                         {tag}
                       </span>
                     ))}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
+                  <div className="pt-4 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between transition-colors">
                     <div className="flex flex-col">
-                       <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Contact Channel</span>
-                       <span className="text-xs font-bold text-slate-700 truncate max-w-[150px]">{user.email}</span>
+                       <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Contact Channel</span>
+                       <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[150px] transition-colors">{user.email}</span>
                     </div>
                     <div className="flex gap-2">
                       <button 
                         onClick={() => handleCopy(user.email, user.id)}
-                        className="p-2 bg-slate-50 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-xl transition-all"
+                        className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all"
                         title="Copy Email"
                       >
                         {copiedId === user.id ? <Check size={16} /> : <Copy size={16} />}
                       </button>
                       <a 
                         href={`mailto:${user.email}`}
-                        className="p-2 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all"
+                        className="p-2 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-all font-bold"
                         title="Direct Message"
                       >
                         <MessageSquare size={16} />
@@ -333,12 +333,12 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
 
       {activeTab === 'tools' && (
         <div className="space-y-6 animate-in slide-in-from-bottom-4">
-          <div className="flex justify-between items-center">
-             <h3 className="text-xl font-black text-slate-900 uppercase italic">Digital Command Center</h3>
+          <div className="flex justify-between items-center transition-colors">
+             <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic transition-colors">Digital Command Center</h3>
              {isExec && (
                <button 
                 onClick={() => setModalType('link')}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest"
+                className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg transition-all"
                >
                  <Plus size={16} /> Add Tool
                </button>
@@ -351,21 +351,21 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
                   href={link.url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col items-center text-center hover:border-blue-500 hover:shadow-xl hover:-translate-y-2 transition-all h-full"
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 flex flex-col items-center text-center hover:border-blue-500 dark:hover:border-blue-500/50 hover:shadow-xl hover:-translate-y-2 transition-all h-full"
                 >
-                  <div className={`${link.color} text-white p-5 rounded-3xl mb-6 shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform`}>
+                  <div className={`${link.color} text-white p-5 rounded-3xl mb-6 shadow-xl shadow-slate-200 dark:shadow-none group-hover:scale-110 transition-transform`}>
                     {getIconForLink(link.label)}
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 uppercase italic mb-2 tracking-tight">{link.label}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed mb-6">{link.desc}</p>
-                  <div className="mt-auto flex items-center gap-2 text-blue-600 text-xs font-black uppercase tracking-widest">
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic mb-2 tracking-tight transition-colors">{link.label}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 transition-colors">{link.desc}</p>
+                  <div className="mt-auto flex items-center gap-2 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest transition-colors">
                     Launch Tool <ExternalLink size={14} />
                   </div>
                 </a>
                 {isExec && (
                   <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={(e) => { e.preventDefault(); setModalType('link'); setEditingItem(link); }} className="p-2 bg-white/80 backdrop-blur shadow rounded-full text-slate-400 hover:text-blue-600"><Edit3 size={14}/></button>
-                    <button onClick={(e) => { e.preventDefault(); removeItem('link', link.id); }} className="p-2 bg-white/80 backdrop-blur shadow rounded-full text-slate-400 hover:text-rose-600"><Trash2 size={14}/></button>
+                    <button onClick={(e) => { e.preventDefault(); setModalType('link'); setEditingItem(link); }} className="p-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur shadow rounded-full text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all"><Edit3 size={14}/></button>
+                    <button onClick={(e) => { e.preventDefault(); removeItem('link', link.id); }} className="p-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur shadow rounded-full text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 transition-all"><Trash2 size={14}/></button>
                   </div>
                 )}
               </div>
@@ -378,39 +378,39 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
         <div className="space-y-12 animate-in slide-in-from-bottom-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                 <h3 className="text-xl font-black text-slate-900 uppercase italic flex items-center gap-3">
-                    <Building2 className="text-blue-600" size={24} /> Strategic Facilities
+              <div className="flex justify-between items-center transition-colors">
+                 <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic flex items-center gap-3 transition-colors">
+                    <Building2 className="text-blue-600 dark:text-blue-400" size={24} /> Strategic Facilities
                  </h3>
                  {isExec && (
                     <button 
                       onClick={() => setModalType('campus')}
-                      className="p-2 bg-slate-100 rounded-xl hover:bg-slate-200 text-slate-600 transition-all"
+                      className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-all"
                     >
                       <Plus size={18} />
                     </button>
                  )}
               </div>
               <div className="grid grid-cols-1 gap-4">
-                {campusResources.map((res) => (
-                  <div key={res.id} className="bg-white border border-slate-200 rounded-[2rem] p-6 flex items-start gap-4 hover:border-blue-300 transition-all relative group">
-                    <div className="bg-slate-100 text-slate-600 p-3 rounded-2xl">
+                 {campusResources.map((res) => (
+                  <div key={res.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 flex items-start gap-4 hover:border-blue-300 dark:hover:border-blue-500/50 transition-all relative group transition-colors">
+                    <div className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 p-3 rounded-2xl transition-colors">
                       {res.title.toLowerCase().includes('shop') || res.title.toLowerCase().includes('maker') ? <Wrench size={18} /> : <Shield size={18} />}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-bold text-slate-900">{res.title}</h4>
-                        <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">{res.loc}</span>
+                        <h4 className="font-bold text-slate-900 dark:text-white transition-colors">{res.title}</h4>
+                        <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-lg transition-colors">{res.loc}</span>
                       </div>
-                      <p className="text-xs text-slate-500 mb-3">{res.desc}</p>
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 transition-colors">{res.desc}</p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 dark:text-slate-500 transition-colors">
                         <Mail size={12} /> {res.contact}
                       </div>
                     </div>
                     {isExec && (
                       <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <button onClick={() => { setModalType('campus'); setEditingItem(res); }} className="text-slate-300 hover:text-blue-600"><Edit3 size={14}/></button>
-                         <button onClick={() => removeItem('campus', res.id)} className="text-slate-300 hover:text-rose-600"><Trash2 size={14}/></button>
+                         <button onClick={() => { setModalType('campus'); setEditingItem(res); }} className="text-slate-300 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"><Edit3 size={14}/></button>
+                         <button onClick={() => removeItem('campus', res.id)} className="text-slate-300 dark:text-slate-600 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"><Trash2 size={14}/></button>
                       </div>
                     )}
                   </div>
@@ -419,10 +419,10 @@ const ResourcesHub: React.FC<ResourcesHubProps> = ({
             </div>
 
             <div className="space-y-6">
-              <h3 className="text-xl font-black text-slate-900 uppercase italic flex items-center gap-3">
-                <Calendar className="text-blue-600" size={24} /> Space Bookings
+              <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic flex items-center gap-3 transition-colors">
+                <Calendar className="text-blue-600 dark:text-blue-400" size={24} /> Space Bookings
               </h3>
-              <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden h-full min-h-[400px]">
+              <div className="bg-slate-900 dark:bg-slate-800 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden h-full min-h-[400px]">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full -mr-32 -mt-32 blur-3xl" />
                 <div className="relative">
                   <h4 className="text-2xl font-black uppercase italic mb-4">Strategic Planning Rooms</h4>

@@ -25,43 +25,83 @@ export const useHubState = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
   const [showNotifications, setShowNotifications] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('marine_theme') === 'dark' || 
-             (!localStorage.getItem('marine_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    }
-    return false;
-  });
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
-  // States with Persistence
-  const [users, setUsers] = useState<User[]>(() => JSON.parse(localStorage.getItem('marine_users') || JSON.stringify(INITIAL_USERS)));
-  const [projects, setProjects] = useState<Project[]>(() => JSON.parse(localStorage.getItem('marine_projects') || JSON.stringify(INITIAL_PROJECTS)));
-  const [tasks, setTasks] = useState<KanbanTask[]>(() => JSON.parse(localStorage.getItem('marine_tasks') || JSON.stringify(INITIAL_TASKS)));
-  const [logs, setLogs] = useState<AppLogEntry[]>(() => JSON.parse(localStorage.getItem('marine_logs') || '[]'));
-  const [sops, setSops] = useState<SOP[]>(() => JSON.parse(localStorage.getItem('marine_sops') || '[]'));
-  const [sopSubmissions, setSopSubmissions] = useState<SOPSubmission[]>(() => JSON.parse(localStorage.getItem('marine_sop_subs') || '[]'));
-  const [meetingMinutes, setMeetingMinutes] = useState<MeetingMinute[]>(() => JSON.parse(localStorage.getItem('marine_minutes') || '[]'));
-  const [reimbursements, setReimbursements] = useState<ReimbursementRequest[]>(() => JSON.parse(localStorage.getItem('marine_reimbursements') || '[]'));
-  const [budgets, setBudgets] = useState<BudgetCategory[]>(() => JSON.parse(localStorage.getItem('marine_budgets') || JSON.stringify(INITIAL_BUDGETS)));
-  const [bom, setBOM] = useState<BOMItem[]>(() => JSON.parse(localStorage.getItem('marine_bom') || JSON.stringify(INITIAL_BOM)));
-  const [notifications, setNotifications] = useState<AppNotification[]>(() => JSON.parse(localStorage.getItem('marine_notifications') || '[]'));
+  // States with Persistence (Initialized with mock data for SSR safety)
+  const [users, setUsers] = useState<User[]>(INITIAL_USERS);
+  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
+  const [tasks, setTasks] = useState<KanbanTask[]>(INITIAL_TASKS);
+  const [logs, setLogs] = useState<AppLogEntry[]>([]);
+  const [sops, setSops] = useState<SOP[]>([]);
+  const [sopSubmissions, setSopSubmissions] = useState<SOPSubmission[]>([]);
+  const [meetingMinutes, setMeetingMinutes] = useState<MeetingMinute[]>([]);
+  const [reimbursements, setReimbursements] = useState<ReimbursementRequest[]>([]);
+  const [budgets, setBudgets] = useState<BudgetCategory[]>(INITIAL_BUDGETS);
+  const [bom, setBOM] = useState<BOMItem[]>(INITIAL_BOM);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [printQueue, setPrintQueue] = useState<PrintJob[]>([]);
+  const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
+  const [orderRequests, setOrderRequests] = useState<OrderRequest[]>([]);
+  const [sponsorships, setSponsorships] = useState<SponsorshipContact[]>([]);
+  const [feedbackFeed, setFeedbackFeed] = useState<HubFeedback[]>([]);
+  const [labBookings, setLabBookings] = useState<LabBooking[]>([]);
+  const [labInventory, setLabInventory] = useState<InventoryItem[]>([]);
+  const [labCheckouts, setLabCheckouts] = useState<ToolCheckout[]>([]);
+  const [labCleaning, setLabCleaning] = useState<CleaningLog[]>([]);
+  const [resourceLinks, setResourceLinks] = useState<ResourceLink[]>(INITIAL_RESOURCE_LINKS);
+  const [campusResources, setCampusResources] = useState<CampusResource[]>(INITIAL_CAMPUS_RESOURCES);
+  const [schoolContacts, setSchoolContacts] = useState<SchoolContact[]>(INITIAL_SCHOOL_CONTACTS);
+  const [rolePermissions, setRolePermissions] = useState<Record<UserRole, RolePermissions>>(DEFAULT_PERMISSIONS);
 
-  // Ops States
-  const [printQueue, setPrintQueue] = useState<PrintJob[]>(() => JSON.parse(localStorage.getItem('marine_prints') || '[]'));
-  const [workOrders, setWorkOrders] = useState<WorkOrder[]>(() => JSON.parse(localStorage.getItem('marine_workorders') || '[]'));
-  const [orderRequests, setOrderRequests] = useState<OrderRequest[]>(() => JSON.parse(localStorage.getItem('marine_orders') || '[]'));
-  const [sponsorships, setSponsorships] = useState<SponsorshipContact[]>(() => JSON.parse(localStorage.getItem('marine_sponsorships') || '[]'));
-  const [feedbackFeed, setFeedbackFeed] = useState<HubFeedback[]>(() => JSON.parse(localStorage.getItem('marine_feedback') || '[]'));
-  const [labBookings, setLabBookings] = useState<LabBooking[]>(() => JSON.parse(localStorage.getItem('marine_lab_bookings') || '[]'));
-  const [labInventory, setLabInventory] = useState<InventoryItem[]>(() => JSON.parse(localStorage.getItem('marine_lab_inventory') || '[]'));
-  const [labCheckouts, setLabCheckouts] = useState<ToolCheckout[]>(() => JSON.parse(localStorage.getItem('marine_lab_checkouts') || '[]'));
-  const [labCleaning, setLabCleaning] = useState<CleaningLog[]>(() => JSON.parse(localStorage.getItem('marine_lab_cleaning') || '[]'));
-  const [resourceLinks, setResourceLinks] = useState<ResourceLink[]>(() => JSON.parse(localStorage.getItem('marine_res_links') || JSON.stringify(INITIAL_RESOURCE_LINKS)));
-  const [campusResources, setCampusResources] = useState<CampusResource[]>(() => JSON.parse(localStorage.getItem('marine_res_campus') || JSON.stringify(INITIAL_CAMPUS_RESOURCES)));
-  const [schoolContacts, setSchoolContacts] = useState<SchoolContact[]>(() => JSON.parse(localStorage.getItem('marine_res_contacts') || JSON.stringify(INITIAL_SCHOOL_CONTACTS)));
-  const [rolePermissions, setRolePermissions] = useState<Record<UserRole, RolePermissions>>(() => JSON.parse(localStorage.getItem('marine_perms') || JSON.stringify(DEFAULT_PERMISSIONS)));
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // Mount Effect: Load from localStorage
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const load = (key: string, initial: any) => {
+      const saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : initial;
+    };
+
+    setUsers(load('marine_users', INITIAL_USERS));
+    setProjects(load('marine_projects', INITIAL_PROJECTS));
+    setTasks(load('marine_tasks', INITIAL_TASKS));
+    setLogs(load('marine_logs', []));
+    setSops(load('marine_sops', []));
+    setSopSubmissions(load('marine_sop_subs', []));
+    setMeetingMinutes(load('marine_minutes', []));
+    setReimbursements(load('marine_reimbursements', []));
+    setBudgets(load('marine_budgets', INITIAL_BUDGETS));
+    setBOM(load('marine_bom', INITIAL_BOM));
+    setNotifications(load('marine_notifications', []));
+    setPrintQueue(load('marine_prints', []));
+    setWorkOrders(load('marine_workorders', []));
+    setOrderRequests(load('marine_orders', []));
+    setSponsorships(load('marine_sponsorships', []));
+    setFeedbackFeed(load('marine_feedback', []));
+    setLabBookings(load('marine_lab_bookings', []));
+    setLabInventory(load('marine_lab_inventory', []));
+    setLabCheckouts(load('marine_lab_checkouts', []));
+    setLabCleaning(load('marine_lab_cleaning', []));
+    setResourceLinks(load('marine_res_links', INITIAL_RESOURCE_LINKS));
+    setCampusResources(load('marine_res_campus', INITIAL_CAMPUS_RESOURCES));
+    setSchoolContacts(load('marine_res_contacts', INITIAL_SCHOOL_CONTACTS));
+    setRolePermissions(load('marine_perms', DEFAULT_PERMISSIONS));
+
+    const savedTheme = localStorage.getItem('marine_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    setIsDarkMode(initialDark);
+    if (initialDark) document.documentElement.classList.add('dark');
+
+    setIsLoaded(true);
+  }, []);
+
+  // Persistence Effect
+  useEffect(() => {
+    if (!isLoaded) return;
+
     localStorage.setItem('marine_users', JSON.stringify(users));
     localStorage.setItem('marine_projects', JSON.stringify(projects));
     localStorage.setItem('marine_tasks', JSON.stringify(tasks));
@@ -86,17 +126,19 @@ export const useHubState = () => {
     localStorage.setItem('marine_res_campus', JSON.stringify(campusResources));
     localStorage.setItem('marine_res_contacts', JSON.stringify(schoolContacts));
     localStorage.setItem('marine_perms', JSON.stringify(rolePermissions));
+  }, [users, projects, tasks, logs, sops, sopSubmissions, meetingMinutes, reimbursements, budgets, bom, notifications, printQueue, workOrders, orderRequests, sponsorships, feedbackFeed, labBookings, labInventory, labCheckouts, labCleaning, resourceLinks, campusResources, schoolContacts, rolePermissions, isLoaded]);
+
+  // Separate Theme Sync Effect
+  useEffect(() => {
+    if (!isLoaded) return;
     localStorage.setItem('marine_theme', isDarkMode ? 'dark' : 'light');
     
-    // Sync with DOM
-    if (typeof document !== 'undefined') {
-      if (isDarkMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
-  }, [users, projects, tasks, logs, sops, sopSubmissions, meetingMinutes, reimbursements, budgets, bom, notifications, printQueue, workOrders, orderRequests, sponsorships, feedbackFeed, labBookings, labInventory, labCheckouts, labCleaning, resourceLinks, campusResources, schoolContacts, rolePermissions, isDarkMode]);
+  }, [isDarkMode, isLoaded]);
 
   const intelligenceContext = useMemo(() => `
     Context: UBCO Marine Robotics Club Hub.

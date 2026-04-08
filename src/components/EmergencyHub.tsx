@@ -59,7 +59,7 @@ const EmergencyHub: React.FC<EmergencyHubProps> = ({ executives, emergencySops, 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-24">
       {/* Header */}
-      <div className="bg-rose-600 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
+      <div className="bg-rose-600 dark:bg-rose-700 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden transition-colors">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse" />
         <div className="relative flex flex-col md:flex-row items-center gap-8">
           <div className="bg-white/20 p-6 rounded-[2rem] backdrop-blur-md">
@@ -76,52 +76,52 @@ const EmergencyHub: React.FC<EmergencyHubProps> = ({ executives, emergencySops, 
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 space-y-6">
-          <section className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
-            <h3 className="text-lg font-black uppercase italic tracking-tight text-slate-900 mb-6 flex items-center gap-2">
+        <div className="lg:col-span-1 space-y-6 transition-colors">
+          <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm transition-colors">
+            <h3 className="text-lg font-black uppercase italic tracking-tight text-slate-900 dark:text-white mb-6 flex items-center gap-2 transition-colors">
               <Siren size={20} className="text-rose-500" /> Key Contacts
             </h3>
             <div className="space-y-4">
-              <a href="tel:911" className="flex items-center justify-between p-5 bg-rose-50 border border-rose-100 rounded-2xl hover:bg-rose-100 transition-all group">
+              <a href="tel:911" className="flex items-center justify-between p-5 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 rounded-2xl hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all group">
                 <div>
-                  <p className="text-[10px] font-black uppercase text-rose-600 tracking-widest">Emergency</p>
-                  <p className="text-2xl font-black text-rose-900">9-1-1</p>
+                  <p className="text-[10px] font-black uppercase text-rose-600 dark:text-rose-400 tracking-widest transition-colors">Emergency</p>
+                  <p className="text-2xl font-black text-rose-900 dark:text-rose-100 transition-colors">9-1-1</p>
                 </div>
-                <Phone size={24} className="text-rose-400 group-hover:scale-110 transition-transform" />
+                <Phone size={24} className="text-rose-400 dark:text-rose-500 group-hover:scale-110 transition-transform" />
               </a>
-              <a href="tel:2508078111" className="flex items-center justify-between p-5 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition-all group">
+              <a href="tel:2508078111" className="flex items-center justify-between p-5 bg-slate-900 dark:bg-slate-800 text-white rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-700 transition-all group">
                 <div>
-                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Campus Security</p>
-                  <p className="text-xl font-black tracking-tight">(250) 807-8111</p>
+                  <p className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest transition-colors">Campus Security</p>
+                  <p className="text-xl font-black tracking-tight transition-colors">(250) 807-8111</p>
                 </div>
-                <Phone size={24} className="text-slate-500 group-hover:scale-110 transition-transform" />
+                <Phone size={24} className="text-slate-500 dark:text-slate-400 group-hover:scale-110 transition-transform" />
               </a>
             </div>
           </section>
         </div>
 
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 transition-colors">
           <section className="space-y-4">
-             <h3 className="text-xl font-black uppercase italic text-slate-900 tracking-tight px-4">Safety Guides</h3>
+             <h3 className="text-xl font-black uppercase italic text-slate-900 dark:text-white tracking-tight px-4 transition-colors">Safety Guides</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                {protocols.map(p => (
-                 <div key={p.id} className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-all">
+                 <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-all">
                     <button 
                       onClick={() => setActiveProcedure(activeProcedure === p.id ? null : p.id)}
                       className="w-full p-6 flex items-center justify-between"
                     >
                       <div className="flex items-center gap-4 text-left">
-                        <div className="p-3 bg-slate-50 rounded-2xl">{p.icon}</div>
-                        <span className="font-bold text-slate-900">{p.title}</span>
+                        <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl transition-colors">{p.icon}</div>
+                        <span className="font-bold text-slate-900 dark:text-white transition-colors">{p.title}</span>
                       </div>
-                      <ChevronRight size={20} className={`text-slate-300 transition-transform ${activeProcedure === p.id ? 'rotate-90' : ''}`} />
+                      <ChevronRight size={20} className={`text-slate-300 dark:text-slate-600 transition-transform ${activeProcedure === p.id ? 'rotate-90' : ''}`} />
                     </button>
                     {activeProcedure === p.id && (
                       <div className="px-6 pb-6 animate-in slide-in-from-top-2">
-                        <div className="space-y-3 pt-2 border-t border-slate-50">
+                        <div className="space-y-3 pt-2 border-t border-slate-50 dark:border-slate-800 transition-colors">
                            {p.steps.map((step, idx) => (
-                             <div key={idx} className="flex gap-3 text-sm text-slate-600">
-                               <span className="font-black text-slate-900">{idx + 1}.</span>
+                             <div key={idx} className="flex gap-3 text-sm text-slate-600 dark:text-slate-400">
+                               <span className="font-black text-slate-900 dark:text-slate-200 transition-colors">{idx + 1}.</span>
                                <span>{step}</span>
                              </div>
                            ))}
@@ -133,19 +133,19 @@ const EmergencyHub: React.FC<EmergencyHubProps> = ({ executives, emergencySops, 
              </div>
           </section>
 
-          <div className="bg-blue-50 border border-blue-100 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-start gap-6">
-            <div className="p-4 bg-blue-600 text-white rounded-3xl shrink-0">
+           <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/50 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-start gap-6 transition-colors">
+            <div className="p-4 bg-blue-600 dark:bg-blue-700 text-white rounded-3xl shrink-0 transition-colors">
                <MapPin size={24} />
             </div>
             <div>
-               <h4 className="text-xl font-black text-blue-900 uppercase italic tracking-tight mb-2">Meeting Point</h4>
-               <p className="text-sm text-blue-800 leading-relaxed font-medium mb-4">
+               <h4 className="text-xl font-black text-blue-900 dark:text-blue-100 uppercase italic tracking-tight mb-2 transition-colors">Meeting Point</h4>
+               <p className="text-sm text-blue-800 dark:text-blue-300 leading-relaxed font-medium mb-4 transition-colors">
                  If the building is evacuated, everyone meets at the <strong>EME North Parking Lot (Area H)</strong>. Please find an exec once you're there so we can make sure everyone got out okay.
                </p>
                <a 
                  href="https://maps.ok.ubc.ca" 
                  target="_blank" 
-                 className="inline-flex items-center gap-2 text-xs font-black uppercase text-blue-600 hover:underline"
+                 className="inline-flex items-center gap-2 text-xs font-black uppercase text-blue-600 dark:text-blue-400 hover:underline transition-colors"
                >
                  See Campus Map <ExternalLink size={14} />
                </a>

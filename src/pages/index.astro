@@ -1,5 +1,6 @@
 ---
 import App from '../App';
+import '../styles/global.css';
 ---
 
 <!DOCTYPE html>
@@ -11,19 +12,18 @@ import App from '../App';
 		<meta name="generator" content={Astro.generator} />
 		<title>OKMR Team Hub</title>
 		<script is:inline>
-			const theme = localStorage.getItem('marine_theme');
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			if (theme === 'dark' || (!theme && prefersDark)) {
-				document.documentElement.classList.add('dark');
-			}
+			(function() {
+				const theme = localStorage.getItem('marine_theme');
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				if (theme === 'dark' || (!theme && prefersDark)) {
+					document.documentElement.classList.add('dark');
+				} else {
+					document.documentElement.classList.remove('dark');
+				}
+			})();
 		</script>
-		<style is:global>
-			@tailwind base;
-			@tailwind components;
-			@tailwind utilities;
-		</style>
 	</head>
-	<body class="bg-slate-50">
-		<App client:only="react" />
+	<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-500">
+		<App client:load />
 	</body>
 </html>
