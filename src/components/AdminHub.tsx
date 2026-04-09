@@ -3,10 +3,10 @@ import React, { useState, useMemo } from 'react';
 import { UserRole } from '../types';
 import type { User, UserStatus, AppLogEntry, RolePermissions } from '../types';
 import { 
-  UserPlus, Search, Shield, Tag as TagIcon, MoreHorizontal, 
-  CheckCircle2, XCircle, Users, Clock, Hash, Plus, Trash2,
-  BarChart3, Activity, MessageSquare, ClipboardList, Printer,
-  History, UserCheck, AlertCircle, FileText, Lock, Check, Settings2,
+  UserPlus, Search, Shield, Tag as TagIcon, 
+  CheckCircle2, XCircle, Users, Clock, Plus, Trash2,
+  Activity, MessageSquare, ClipboardList, Printer,
+  History, AlertCircle, FileText, Lock, Check,
   Phone, HeartPulse, ShieldAlert
 } from 'lucide-react';
 

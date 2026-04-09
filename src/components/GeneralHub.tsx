@@ -3,10 +3,10 @@ import React, { useState, useMemo } from 'react';
 import { UserRole } from '../types';
 import type { Project, KanbanTask, Announcement, ClubEvent, RolePermissions, EventType, HubFeedback } from '../types';
 import { 
-  Calendar, Layout, BarChart2, Bell, MessageSquare, 
-  ChevronRight, MoreVertical, Plus, Clock, AlertCircle,
+  Calendar, BarChart2, Bell, MessageSquare, 
+  ChevronRight, Plus, Clock, AlertCircle,
   Trello, ListTodo, TrendingUp, CalendarDays, Filter, X,
-  ChevronLeft, Users, Briefcase, MapPin, Radio, Sparkles,
+  Users, MapPin, Radio, Sparkles,
   GanttChart
 } from 'lucide-react';
 import { generateWeeklyBriefing } from '../services/geminiService';

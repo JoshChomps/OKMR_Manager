@@ -5,7 +5,7 @@ import type { User, PrintJob, WorkOrder, OrderRequest, SponsorshipContact, HubFe
 import { 
   Printer, ClipboardList, ShoppingCart, MessageSquare, Handshake, 
   Plus, Trash2, Edit3, X, Save, ExternalLink, Filter, 
-  Search, CheckCircle2, Clock, AlertTriangle, FileUp, 
+  Search, CheckCircle2, Clock, AlertTriangle, 
   ChevronRight, ArrowRight, User as UserIcon, Building2, Tag, DollarSign,
   ShieldAlert, Send, Eye, EyeOff, Users, Target, Info
 } from 'lucide-react';

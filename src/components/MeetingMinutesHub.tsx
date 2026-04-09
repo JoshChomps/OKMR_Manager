@@ -1,11 +1,10 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { UserRole } from '../types';
 import type { User, MeetingMinute } from '../types';
 import { 
   FileText, Plus, Clock, Search, ChevronRight, ArrowLeft, 
   Shield, Eye, EyeOff, Trash2, Edit3, Save, X, Mic, 
-  Square, Play, Sparkles, Download, Printer, Users, 
+  Square, Play, Sparkles, Printer, Users, 
   ListChecks, Calendar, Tag, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { processMeetingAudio } from '../services/geminiService';

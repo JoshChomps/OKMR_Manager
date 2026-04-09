@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { UserRole } from '../types';
 import type { 
-  User, UserStatus, PageId, ModuleData, 
+  User, UserStatus, PageId, 
   AppLogEntry, Project, KanbanTask, Announcement, 
   ClubEvent, RolePermissions, SOP, SOPSubmission, 
   Toast, AppNotification, ResourceLink, CampusResource, 
@@ -16,6 +16,9 @@ import {
   INITIAL_BUDGETS, INITIAL_BOM, INITIAL_USERS,
   DEFAULT_PERMISSIONS
 } from '../mockData';
+import { auth } from '../services/firebaseConfig';
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import { sheetsService } from '../services/sheetsService';
 
 export const useHubState = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -54,40 +57,70 @@ export const useHubState = () => {
   const [rolePermissions, setRolePermissions] = useState<Record<UserRole, RolePermissions>>(DEFAULT_PERMISSIONS);
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // Mount Effect: Load from localStorage
+  // Helper for adding toasts
+  const addToast = (message: string, type: Toast['type']) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 5000);
+  };
+
+  // Sync Firebase auth state with local user roster
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // Attempt to find user data in our Sheet/Mock data
+        const localUser = users.find(u => u.email.toLowerCase() === firebaseUser.email?.toLowerCase());
+        if (localUser) {
+          setCurrentUser(localUser);
+          setIsLoggedIn(true);
+        } else {
+          // If authenticated in Firebase but not in our roster, we might need to create a profile
+          addToast("Account detected, but not on club roster.", "info");
+        }
+      } else {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, [users]);
+
+  // Load local data on mount and trigger remote sync
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const load = (key: string, initial: any) => {
+    const loadLocal = (key: string, initial: any) => {
       const saved = localStorage.getItem(key);
       return saved ? JSON.parse(saved) : initial;
     };
 
-    setUsers(load('marine_users', INITIAL_USERS));
-    setProjects(load('marine_projects', INITIAL_PROJECTS));
-    setTasks(load('marine_tasks', INITIAL_TASKS));
-    setLogs(load('marine_logs', []));
-    setSops(load('marine_sops', []));
-    setSopSubmissions(load('marine_sop_subs', []));
-    setMeetingMinutes(load('marine_minutes', []));
-    setReimbursements(load('marine_reimbursements', []));
-    setBudgets(load('marine_budgets', INITIAL_BUDGETS));
-    setBOM(load('marine_bom', INITIAL_BOM));
-    setNotifications(load('marine_notifications', []));
-    setPrintQueue(load('marine_prints', []));
-    setWorkOrders(load('marine_workorders', []));
-    setOrderRequests(load('marine_orders', []));
-    setSponsorships(load('marine_sponsorships', []));
-    setFeedbackFeed(load('marine_feedback', []));
-    setLabBookings(load('marine_lab_bookings', []));
-    setLabInventory(load('marine_lab_inventory', []));
-    setLabCheckouts(load('marine_lab_checkouts', []));
-    setLabCleaning(load('marine_lab_cleaning', []));
-    setResourceLinks(load('marine_res_links', INITIAL_RESOURCE_LINKS));
-    setCampusResources(load('marine_res_campus', INITIAL_CAMPUS_RESOURCES));
-    setSchoolContacts(load('marine_res_contacts', INITIAL_SCHOOL_CONTACTS));
-    setRolePermissions(load('marine_perms', DEFAULT_PERMISSIONS));
+    // Load Local Fallbacks First
+    setUsers(loadLocal('marine_users', INITIAL_USERS));
+    setProjects(loadLocal('marine_projects', INITIAL_PROJECTS));
+    setTasks(loadLocal('marine_tasks', INITIAL_TASKS));
+    setLogs(loadLocal('marine_logs', []));
+    setSops(loadLocal('marine_sops', []));
+    setSopSubmissions(loadLocal('marine_sop_subs', []));
+    setMeetingMinutes(loadLocal('marine_minutes', []));
+    setReimbursements(loadLocal('marine_reimbursements', []));
+    setBudgets(loadLocal('marine_budgets', INITIAL_BUDGETS));
+    setBOM(loadLocal('marine_bom', INITIAL_BOM));
+    setNotifications(loadLocal('marine_notifications', []));
+    setPrintQueue(loadLocal('marine_prints', []));
+    setWorkOrders(loadLocal('marine_workorders', []));
+    setOrderRequests(loadLocal('marine_orders', []));
+    setSponsorships(loadLocal('marine_sponsorships', []));
+    setFeedbackFeed(loadLocal('marine_feedback', []));
+    setLabBookings(loadLocal('marine_lab_bookings', []));
+    setLabInventory(loadLocal('marine_lab_inventory', []));
+    setLabCheckouts(loadLocal('marine_lab_checkouts', []));
+    setLabCleaning(loadLocal('marine_lab_cleaning', []));
+    setResourceLinks(loadLocal('marine_res_links', INITIAL_RESOURCE_LINKS));
+    setCampusResources(loadLocal('marine_res_campus', INITIAL_CAMPUS_RESOURCES));
+    setSchoolContacts(loadLocal('marine_res_contacts', INITIAL_SCHOOL_CONTACTS));
+    setRolePermissions(loadLocal('marine_perms', DEFAULT_PERMISSIONS));
 
     const savedTheme = localStorage.getItem('marine_theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -96,63 +129,78 @@ export const useHubState = () => {
     if (initialDark) document.documentElement.classList.add('dark');
 
     setIsLoaded(true);
+
+    // Synchronize from Remote Google Sheet
+    syncDataFromRemote();
   }, []);
 
-  // Persistence Effect
+  const syncDataFromRemote = async () => {
+    setIsSyncing(true);
+    try {
+      // Parallel fetch for core tables
+      const [remoteProjects, remoteTasks, remoteUsers] = await Promise.all([
+        sheetsService.fetchData<Project>('Projects'),
+        sheetsService.fetchData<KanbanTask>('Tasks'),
+        sheetsService.fetchData<User>('Users')
+      ]);
+
+      if (remoteProjects.length > 0) setProjects(remoteProjects);
+      if (remoteTasks.length > 0) setTasks(remoteTasks);
+      if (remoteUsers.length > 0) setUsers(remoteUsers);
+      
+      addToast("Central Data Synced", "success");
+    } catch (err) {
+      console.warn("Remote sync failed, using local/mock data.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Keep localStorage in sync with state changes
   useEffect(() => {
     if (!isLoaded) return;
-
-    localStorage.setItem('marine_users', JSON.stringify(users));
-    localStorage.setItem('marine_projects', JSON.stringify(projects));
-    localStorage.setItem('marine_tasks', JSON.stringify(tasks));
-    localStorage.setItem('marine_logs', JSON.stringify(logs));
-    localStorage.setItem('marine_sops', JSON.stringify(sops));
-    localStorage.setItem('marine_sop_subs', JSON.stringify(sopSubmissions));
-    localStorage.setItem('marine_minutes', JSON.stringify(meetingMinutes));
-    localStorage.setItem('marine_reimbursements', JSON.stringify(reimbursements));
-    localStorage.setItem('marine_budgets', JSON.stringify(budgets));
-    localStorage.setItem('marine_bom', JSON.stringify(bom));
-    localStorage.setItem('marine_notifications', JSON.stringify(notifications));
-    localStorage.setItem('marine_prints', JSON.stringify(printQueue));
-    localStorage.setItem('marine_workorders', JSON.stringify(workOrders));
-    localStorage.setItem('marine_orders', JSON.stringify(orderRequests));
-    localStorage.setItem('marine_sponsorships', JSON.stringify(sponsorships));
-    localStorage.setItem('marine_feedback', JSON.stringify(feedbackFeed));
-    localStorage.setItem('marine_lab_bookings', JSON.stringify(labBookings));
-    localStorage.setItem('marine_lab_inventory', JSON.stringify(labInventory));
-    localStorage.setItem('marine_lab_checkouts', JSON.stringify(labCheckouts));
-    localStorage.setItem('marine_lab_cleaning', JSON.stringify(labCleaning));
-    localStorage.setItem('marine_res_links', JSON.stringify(resourceLinks));
-    localStorage.setItem('marine_res_campus', JSON.stringify(campusResources));
-    localStorage.setItem('marine_res_contacts', JSON.stringify(schoolContacts));
-    localStorage.setItem('marine_perms', JSON.stringify(rolePermissions));
+    const save = (key: string, data: any) => localStorage.setItem(key, JSON.stringify(data));
+    
+    save('marine_users', users);
+    save('marine_projects', projects);
+    save('marine_tasks', tasks);
+    save('marine_logs', logs);
+    save('marine_sops', sops);
+    save('marine_sop_subs', sopSubmissions);
+    save('marine_minutes', meetingMinutes);
+    save('marine_reimbursements', reimbursements);
+    save('marine_budgets', budgets);
+    save('marine_bom', bom);
+    save('marine_notifications', notifications);
+    save('marine_prints', printQueue);
+    save('marine_workorders', workOrders);
+    save('marine_orders', orderRequests);
+    save('marine_sponsorships', sponsorships);
+    save('marine_feedback', feedbackFeed);
+    save('marine_lab_bookings', labBookings);
+    save('marine_lab_inventory', labInventory);
+    save('marine_lab_checkouts', labCheckouts);
+    save('marine_lab_cleaning', labCleaning);
+    save('marine_res_links', resourceLinks);
+    save('marine_res_campus', campusResources);
+    save('marine_res_contacts', schoolContacts);
+    save('marine_perms', rolePermissions);
   }, [users, projects, tasks, logs, sops, sopSubmissions, meetingMinutes, reimbursements, budgets, bom, notifications, printQueue, workOrders, orderRequests, sponsorships, feedbackFeed, labBookings, labInventory, labCheckouts, labCleaning, resourceLinks, campusResources, schoolContacts, rolePermissions, isLoaded]);
 
   // Separate Theme Sync Effect
   useEffect(() => {
     if (!isLoaded) return;
     localStorage.setItem('marine_theme', isDarkMode ? 'dark' : 'light');
-    
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    if (isDarkMode) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
   }, [isDarkMode, isLoaded]);
 
   const intelligenceContext = useMemo(() => `
     Context: UBCO Marine Robotics Club Hub.
     Projects: ${projects.map(p => `${p.name} at ${p.progress}%`).join(', ')}.
     Meeting Notes: ${meetingMinutes.slice(0, 5).map(m => m.title).join(', ')}.
-    SOPs: ${sops.map(s => s.title).join(', ')}.
     Team Members: ${users.length} registered members.
   `, [projects, meetingMinutes, sops, users]);
-
-  const addToast = (message: string, type: Toast['type']) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    setToasts(prev => [...prev, { id, message, type }]);
-    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 5000);
-  };
 
   const addNotification = (title: string, message: string, type: AppNotification['type']) => {
     const n: AppNotification = { id: Math.random().toString(36).substr(2, 9), title, message, timestamp: new Date().toISOString(), read: false, type };
@@ -165,24 +213,52 @@ export const useHubState = () => {
     setLogs(prev => [...prev, l]);
   };
 
-  const handleLogin = (email: string) => {
-    const user = users.find((u: User) => u.email.toLowerCase() === email.toLowerCase());
-    if (user) {
-      if (user.status === 'rejected' as UserStatus) { addToast("Access Denied.", "error"); return; }
-      setCurrentUser(user);
-      setIsLoggedIn(true);
-      addLog('system_login', 'Signed in.');
-      addToast(`Welcome back, ${user.name}!`, "success");
-    } else { addToast("Email not found on our roster.", "error"); }
+  // Authentication handlers
+  const handleLogin = async (email: string, password?: string) => {
+    if (!password) {
+      addToast("Password required for real secure login.", "error");
+      return;
+    }
+
+    // DEMO BYPASS: Allow login with demo password even without Firebase config
+    if (password === 'demo1234') {
+      const match = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (match) {
+        setCurrentUser(match);
+        setIsLoggedIn(true);
+        addToast(`Verified Demo: ${match.name}`, "success");
+        return;
+      }
+    }
+    
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const fbUser = userCredential.user;
+      
+      // Find matches in our roster
+      const match = users.find(u => u.email.toLowerCase() === fbUser.email?.toLowerCase());
+      if (match) {
+        setCurrentUser(match);
+        setIsLoggedIn(true);
+        addToast(`Verified as ${match.name}`, "success");
+      }
+    } catch (error: any) {
+      addToast(error.message || "Invalid credentials", "error");
+    }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setCurrentUser(null);
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setIsLoggedIn(false);
+      setCurrentUser(null);
+    } catch (err) {
+      addToast("Logout failed", "error");
+    }
   };
 
   return {
-    isLoggedIn, currentUser, toasts, activePage, isSidebarOpen, authView, showNotifications,
+    isLoggedIn, currentUser, toasts, activePage, isSidebarOpen, authView, showNotifications, isSyncing,
     users, projects, tasks, logs, sops, sopSubmissions, meetingMinutes, reimbursements, budgets, bom, notifications,
     printQueue, workOrders, orderRequests, sponsorships, feedbackFeed, labBookings, labInventory, labCheckouts, labCleaning,
     resourceLinks, campusResources, schoolContacts, rolePermissions,

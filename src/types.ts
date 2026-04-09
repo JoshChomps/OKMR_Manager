@@ -201,14 +201,6 @@ export interface HubFeedback {
   target?: string;
 }
 
-export interface PageContent {
-  title: string;
-  markdown: string;
-  lastUpdated: string;
-  updatedBy: string;
-}
-
-export type ModuleData = Record<string, PageContent>;
 
 export interface AppLogEntry {
   id: string;

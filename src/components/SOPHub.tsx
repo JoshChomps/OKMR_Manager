@@ -5,9 +5,8 @@ import type { SOP, SOPStep, SOPSubmission, RolePermissions, SOPStepType, Toast }
 import { 
   FileText, ClipboardCheck, Plus, Clock, Search, 
   ChevronRight, ArrowLeft, CheckCircle2, AlertTriangle,
-  Upload, Type, CheckSquare, Info, Trash2, Camera, Save, X,
-  Check, Shield, MoreVertical, Eye, Download, Printer, User,
-  Play, Image as ImageIcon, Video as VideoIcon
+  Type, CheckSquare, Info, Trash2, Camera, Save, X,
+  Check, Shield, Eye, User, Play
 } from 'lucide-react';
 
 interface SOPHubProps {

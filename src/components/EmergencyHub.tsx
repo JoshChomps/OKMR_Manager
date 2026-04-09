@@ -4,8 +4,8 @@ import { UserRole } from '../types';
 import type { User, SOP } from '../types';
 import { 
   AlertTriangle, Phone, ShieldAlert, Zap, Flame, 
-  Droplets, HeartPulse, MapPin, Info, ChevronRight, 
-  ExternalLink, User as UserIcon, LifeBuoy, Siren
+  HeartPulse, MapPin, Info, ChevronRight, 
+  ExternalLink, User as UserIcon, Siren
 } from 'lucide-react';
 
 interface EmergencyHubProps {

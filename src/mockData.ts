@@ -1,7 +1,7 @@
 
 import { UserRole } from './types';
 import type { 
-  Project, KanbanTask, ModuleData, RolePermissions, 
+  Project, KanbanTask, RolePermissions, 
   ResourceLink, CampusResource, SchoolContact, BudgetCategory, 
   BOMItem, User, UserStatus
 } from './types';
@@ -17,16 +17,6 @@ export const INITIAL_TASKS: KanbanTask[] = [
   { id: '2', title: 'IMU Calibration Script', status: 'Doing', priority: 'Medium', assignee: 'John Lead', team: 'Software' },
 ];
 
-export const DEFAULT_MODULE_CONTENT: ModuleData = {
-  general: { title: 'Welcome to the Hub', markdown: 'Glad to have you here! This is the central spot for all things UBCO Marine Robotics.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-  finances: { title: 'Club Finances', markdown: 'Check our current budget and submit reimbursement requests here.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-  sop: { title: 'SOPs & Safety Guides', markdown: '## Safety First\nMake sure to read through the lab safety guidelines before starting any work.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-  'lab-space': { title: 'Lab Management', markdown: 'Schedule shop time and keep track of our tools.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-  operations: { title: 'Team Operations', markdown: 'Keeping track of 3D prints, part orders, and sponsors.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-  resources: { title: 'Member Resources', markdown: 'Quick links to our software, Drive, and important school contacts.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-  'meeting-minutes': { title: 'Meeting Notes', markdown: 'Missed a meeting? Catch up on what we discussed here.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-  emergency: { title: 'Safety & Emergency', markdown: '## Important\nIn case of emergency, follow these steps immediately.', lastUpdated: '2024-03-20', updatedBy: 'Admin' },
-};
 
 export const DEFAULT_PERMISSIONS: Record<UserRole, RolePermissions> = {
   [UserRole.EXECUTIVE]: { canEditKanban: true, canEditCalendar: true, canPostAnnouncements: true, canEditModuleContent: true, canManageUsers: true, canCreateSOP: true },

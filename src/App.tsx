@@ -152,19 +152,25 @@ const App: React.FC = () => {
     }
   };
 
+  // Auth Guard
   if (!isLoggedIn || !currentUser) return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 transition-colors duration-500">
       <div className="w-full max-w-md bg-white dark:bg-slate-900 p-12 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 text-center">
         <div className="w-20 h-20 bg-blue-600 rounded-[2rem] mx-auto mb-8 flex items-center justify-center text-white text-4xl font-black shadow-xl">M</div>
         <h1 className="text-3xl font-black uppercase italic tracking-tighter mb-2 dark:text-white">Team Hub</h1>
         <p className="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-10">UBCO Marine Robotics Portal</p>
-        <form onSubmit={(e) => { e.preventDefault(); handleLogin(new FormData(e.currentTarget as any).get('email') as string); }} className="space-y-4">
-          <input name="email" required placeholder="Your Email" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all" />
-          <button type="submit" className="w-full bg-slate-900 dark:bg-blue-600 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all shadow-xl active:scale-95">Sign In</button>
+        <form onSubmit={(e) => { 
+          e.preventDefault(); 
+          const data = new FormData(e.currentTarget as any);
+          handleLogin(data.get('email') as string, data.get('password') as string); 
+        }} className="space-y-4">
+          <input name="email" type="email" required placeholder="Your Email" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all text-sm" />
+          <input name="password" type="password" required placeholder="Password" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all text-sm" />
+          <button type="submit" className="w-full bg-slate-900 dark:bg-blue-600 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all shadow-xl active:scale-95 text-xs">Sign In</button>
         </form>
         <div className="mt-10 grid grid-cols-2 gap-2 opacity-50 hover:opacity-100 transition-opacity">
-          <button onClick={() => handleLogin('exec@ubcomarine.com')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-[8px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-all">Exec Demo</button>
-          <button onClick={() => handleLogin('member@ubcomarine.com')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-[8px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-all">Member Demo</button>
+          <button onClick={() => handleLogin('exec@ubcomarine.com', 'demo1234')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-[8px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-all">Exec Demo</button>
+          <button onClick={() => handleLogin('member@ubcomarine.com', 'demo1234')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-[8px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-all">Member Demo</button>
         </div>
       </div>
     </div>
@@ -201,9 +207,9 @@ const App: React.FC = () => {
       <main className="max-w-7xl mx-auto p-6 md:p-10 lg:p-14">{renderContent()}</main>
       <HubChatbot appContext={intelligenceContext} />
       
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 max-w-sm w-full no-print">
+      <div className="fixed bottom-6 left-6 z-[9999] flex flex-col gap-3 max-w-sm w-full no-print">
         {toasts.map(t => (
-          <div key={t.id} className={`p-5 rounded-3xl shadow-2xl flex items-center gap-4 animate-in slide-in-from-right duration-300 border backdrop-blur-md ${t.type === 'success' ? 'bg-emerald-50/90 dark:bg-emerald-950/90 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-100' : 'bg-blue-50/90 dark:bg-blue-950/90 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100'}`}>
+          <div key={t.id} className={`p-5 rounded-3xl shadow-2xl flex items-center gap-4 animate-in slide-in-from-left duration-300 border backdrop-blur-md ${t.type === 'success' ? 'bg-emerald-50/90 dark:bg-emerald-950/90 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-100' : 'bg-blue-50/90 dark:bg-blue-950/90 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100'}`}>
              <CheckCircle2 size={20} className={t.type === 'success' ? 'text-emerald-600' : 'text-blue-600'} />
              <p className="text-xs font-black uppercase tracking-widest">{t.message}</p>
           </div>

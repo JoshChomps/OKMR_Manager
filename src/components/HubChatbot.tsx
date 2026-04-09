@@ -33,7 +33,7 @@ const HubChatbot: React.FC<HubChatbotProps> = ({ appContext }) => {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-[100] no-print">
+    <div className="fixed bottom-6 right-6 z-[100] no-print">
       {!isOpen && (
         <button 
           onClick={() => setIsOpen(true)}
@@ -41,51 +41,51 @@ const HubChatbot: React.FC<HubChatbotProps> = ({ appContext }) => {
         >
           <div className="relative">
             <Bot size={24} />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white animate-pulse"></span>
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900 animate-pulse"></span>
           </div>
-          <span className="font-black uppercase tracking-widest text-[10px] pr-2 hidden group-hover:block">Chat with AI</span>
+          <span className="font-black uppercase tracking-widest text-[10px] pr-2 hidden group-hover:block">Ask AI</span>
         </button>
       )}
 
       {isOpen && (
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-2xl w-80 sm:w-96 flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-300">
-          <div className="p-5 bg-slate-900 text-white flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] shadow-2xl w-80 sm:w-96 flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-300">
+          <div className="p-5 bg-slate-900 dark:bg-slate-950 text-white flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-600 rounded-xl"><Sparkles size={18}/></div>
               <div>
                 <p className="text-xs font-black uppercase tracking-tighter">Marine Bot</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-1">
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase flex items-center gap-1">
                   <HardDrive size={8} className="text-emerald-500" /> Connected to Hub
                 </p>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white transition-colors"><X size={20}/></button>
+            <button onClick={() => setIsOpen(false)} className="text-slate-400 dark:text-slate-500 hover:text-white transition-colors"><X size={20}/></button>
           </div>
 
-          <div ref={scrollRef} className="h-96 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+          <div ref={scrollRef} className="h-96 overflow-y-auto p-6 space-y-6 bg-slate-50/50 dark:bg-slate-950/50">
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-white text-slate-400 border border-slate-100'}`}>
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-700'}`}>
                   {m.role === 'user' ? <User size={14}/> : <Bot size={14}/>}
                 </div>
-                <div className={`p-4 rounded-2xl text-sm leading-relaxed max-w-[80%] shadow-sm ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none font-medium' : 'bg-white text-slate-700 rounded-tl-none border border-slate-100'}`}>
+                <div className={`p-4 rounded-2xl text-sm leading-relaxed max-w-[80%] shadow-sm ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none font-medium' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-tl-none border border-slate-100 dark:border-slate-800'}`}>
                   {m.content}
                 </div>
               </div>
             ))}
             {isTyping && (
               <div className="flex gap-3 animate-pulse">
-                <div className="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center"><Loader2 size={14} className="animate-spin text-slate-300"/></div>
-                <div className="p-4 bg-white border border-slate-100 rounded-2xl rounded-tl-none w-16 h-8"></div>
+                <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center"><Loader2 size={14} className="animate-spin text-slate-300 dark:text-slate-600"/></div>
+                <div className="p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl rounded-tl-none w-16 h-8"></div>
               </div>
             )}
           </div>
 
-          <div className="p-5 bg-white border-t border-slate-100">
+          <div className="p-5 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
             <div className="relative flex items-center">
               <input 
                 placeholder="Ask a question..."
-                className="w-full pl-5 pr-14 py-3 bg-slate-100 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full pl-5 pr-14 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none dark:text-white transition-all"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -97,7 +97,7 @@ const HubChatbot: React.FC<HubChatbotProps> = ({ appContext }) => {
                 <Send size={16} />
               </button>
             </div>
-            <p className="text-[8px] text-center text-slate-400 mt-3 font-black uppercase tracking-widest">Powered by Gemini AI</p>
+            <p className="text-[8px] text-center text-slate-400 dark:text-slate-500 mt-3 font-black uppercase tracking-widest">Powered by Gemini AI</p>
           </div>
         </div>
       )}

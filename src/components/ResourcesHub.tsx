@@ -4,7 +4,7 @@ import { UserRole } from '../types';
 import type { User, ResourceLink, CampusResource, SchoolContact } from '../types';
 import { 
   Users, ExternalLink, HardDrive, MessageCircle, Github, 
-  Cpu, Box, Map, BookOpen, Calendar, Phone, Mail, 
+  Cpu, Box, BookOpen, Calendar, Phone, Mail, 
   Search, Filter, Globe, GraduationCap, Building2, 
   Wrench, Copy, Check, MessageSquare, Shield, ChevronRight,
   Plus, Trash2, Edit3, X, Save

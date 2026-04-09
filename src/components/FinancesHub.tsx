@@ -7,9 +7,9 @@ import type {
 } from '../types';
 import { 
   DollarSign, PieChart, Receipt, ClipboardList, 
-  Plus, Search, ExternalLink, Download, Clock, 
-  CheckCircle2, AlertCircle, XCircle, FileUp, 
-  ArrowUpRight, ArrowDownRight, TrendingUp, 
+  Plus, Search, ExternalLink, Clock, 
+  CheckCircle2, AlertCircle, XCircle, 
+  TrendingUp, 
   LayoutList, Table as TableIcon, Filter, X, 
   Send, ShieldCheck, Eye, Edit3, Save
 } from 'lucide-react';
