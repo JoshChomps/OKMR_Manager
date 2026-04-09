@@ -17,7 +17,7 @@ import {
   DEFAULT_PERMISSIONS
 } from '../mockData';
 import { auth } from '../services/firebaseConfig';
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { sheetsService } from '../services/sheetsService';
 
 export const useHubState = () => {
@@ -213,37 +213,70 @@ export const useHubState = () => {
     setLogs(prev => [...prev, l]);
   };
 
-  // Authentication handlers
   const handleLogin = async (email: string, password?: string) => {
     if (!password) {
-      addToast("Password required for real secure login.", "error");
+      addToast("Password required.", "error");
       return;
-    }
-
-    // DEMO BYPASS: Allow login with demo password even without Firebase config
-    if (password === 'demo1234') {
-      const match = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (match) {
-        setCurrentUser(match);
-        setIsLoggedIn(true);
-        addToast(`Verified Demo: ${match.name}`, "success");
-        return;
-      }
     }
     
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const fbUser = userCredential.user;
       
-      // Find matches in our roster
       const match = users.find(u => u.email.toLowerCase() === fbUser.email?.toLowerCase());
       if (match) {
         setCurrentUser(match);
         setIsLoggedIn(true);
         addToast(`Verified as ${match.name}`, "success");
+      } else {
+         addToast("Account exists in Firebase but not in the Hub Roster. Contact Execs.", "error");
+         await signOut(auth); // Log them back out if not in roster
       }
     } catch (error: any) {
-      addToast(error.message || "Invalid credentials", "error");
+      console.error("Login block:", error);
+      addToast("Invalid credentials", "error");
+    }
+  };
+
+  const handleSignUp = async (email: string, password?: string, name?: string) => {
+    if (!password || !name) {
+      addToast("Name and password required for sign up.", "error");
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const fbUser = userCredential.user;
+
+      // Create a default local user object for the roster
+      const newUser: User = {
+        id: fbUser.uid,
+        name: name,
+        email: email,
+        role: UserRole.MEMBER,
+        tags: ['New Member'],
+        status: 'Active',
+        lastActive: new Date().toISOString()
+      };
+
+      // Add to local roster
+      const newRoster = [...users, newUser];
+      setUsers(newRoster);
+      setCurrentUser(newUser);
+      setIsLoggedIn(true);
+      
+      addToast(`Account created! Welcome, ${name}.`, "success");
+      addLog('System', `New user registered: ${name}`);
+
+    } catch (error: any) {
+       console.error("Signup block:", error);
+       if (error.code === 'auth/email-already-in-use') {
+         addToast("Email already exists. Try signing in.", "error");
+       } else if (error.code === 'auth/weak-password') {
+         addToast("Password must be at least 6 characters.", "error");
+       } else {
+         addToast(error.message || "Sign up failed", "error");
+       }
     }
   };
 
@@ -266,7 +299,7 @@ export const useHubState = () => {
     setUsers, setProjects, setTasks, setLogs, setSops, setSopSubmissions, setMeetingMinutes, setReimbursements, setBudgets, setBOM, setNotifications,
     setPrintQueue, setWorkOrders, setOrderRequests, setSponsorships, setFeedbackFeed, setLabBookings, setLabInventory, setLabCheckouts, setLabCleaning,
     setResourceLinks, setCampusResources, setSchoolContacts, setRolePermissions, isDarkMode, setIsDarkMode,
-    addToast, addNotification, addLog, handleLogin, handleLogout,
+    addToast, addNotification, addLog, handleLogin, handleSignUp, handleLogout,
     toggleDarkMode: () => setIsDarkMode(prev => !prev),
     intelligenceContext
   };

@@ -27,15 +27,15 @@ import {
 
 const App: React.FC = () => {
   const {
-    isLoggedIn, currentUser, toasts, activePage, isSidebarOpen, showNotifications,
+    isLoggedIn, currentUser, toasts, activePage, isSidebarOpen, showNotifications, authView,
     users, projects, tasks, logs, sops, sopSubmissions, meetingMinutes, reimbursements, budgets, bom, notifications,
     printQueue, workOrders, orderRequests, sponsorships, feedbackFeed, labBookings, labInventory, labCheckouts, labCleaning,
     rolePermissions, isDarkMode,
-    setCurrentUser, setActivePage, setIsSidebarOpen, setShowNotifications,
+    setCurrentUser, setActivePage, setIsSidebarOpen, setShowNotifications, setAuthView,
     setUsers, setProjects, setTasks, setSops, setSopSubmissions, setMeetingMinutes, setReimbursements, setBudgets, setBOM,
     setPrintQueue, setWorkOrders, setOrderRequests, setSponsorships, setFeedbackFeed, setLabBookings, setLabInventory, setLabCheckouts, setLabCleaning,
     setRolePermissions, toggleDarkMode,
-    addToast, addNotification, handleLogin,
+    addToast, addNotification, handleLogin, handleSignUp,
     intelligenceContext
   } = useHubState();
 
@@ -162,15 +162,36 @@ const App: React.FC = () => {
         <form onSubmit={(e) => { 
           e.preventDefault(); 
           const data = new FormData(e.currentTarget as any);
-          handleLogin(data.get('email') as string, data.get('password') as string); 
+          const email = data.get('email') as string;
+          const password = data.get('password') as string;
+
+          if (authView === 'signup') {
+            const name = data.get('name') as string;
+            handleSignUp(email, password, name);
+          } else {
+            handleLogin(email, password);
+          }
         }} className="space-y-4">
+          
+          {authView === 'signup' && (
+            <input name="name" type="text" required placeholder="Full Name (e.g. John Doe)" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all text-sm" />
+          )}
+
           <input name="email" type="email" required placeholder="Your Email" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all text-sm" />
-          <input name="password" type="password" required placeholder="Password" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all text-sm" />
-          <button type="submit" className="w-full bg-slate-900 dark:bg-blue-600 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all shadow-xl active:scale-95 text-xs">Sign In</button>
+          <input name="password" type="password" required placeholder="Password (Min. 6 chars)" minLength={6} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all text-sm" />
+          
+          <button type="submit" className="w-full bg-slate-900 dark:bg-blue-600 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-blue-700 transition-all shadow-xl active:scale-95 text-xs">
+            {authView === 'login' ? 'Sign In to Hub' : 'Create Account'}
+          </button>
         </form>
-        <div className="mt-10 grid grid-cols-2 gap-2 opacity-50 hover:opacity-100 transition-opacity">
-          <button onClick={() => handleLogin('exec@ubcomarine.com', 'demo1234')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-[8px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-all">Exec Demo</button>
-          <button onClick={() => handleLogin('member@ubcomarine.com', 'demo1234')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-[8px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-all">Member Demo</button>
+        
+        <div className="mt-8 text-center mt-10">
+          <button 
+            onClick={() => setAuthView(authView === 'login' ? 'signup' : 'login')} 
+            className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 dark:text-slate-500 dark:hover:text-blue-400 transition-colors"
+          >
+            {authView === 'login' ? "New to the club? Request Access" : "Already have an account? Sign In"}
+          </button>
         </div>
       </div>
     </div>
