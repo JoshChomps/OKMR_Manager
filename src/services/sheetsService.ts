@@ -12,6 +12,9 @@ export const sheetsService = {
    * @param sheetName The name of the tab (e.g., 'Projects', 'Tasks')
    */
   async fetchData<T>(sheetName: string): Promise<T[]> {
+    if (!SHEETS_API_URL || SHEETS_API_URL === "YOUR_APPS_SCRIPT_WEB_APP_URL") {
+      return [];
+    }
     try {
       const response = await fetch(`${SHEETS_API_URL}?sheet=${encodeURIComponent(sheetName)}`);
       if (!response.ok) throw new Error(`Failed to fetch ${sheetName}`);

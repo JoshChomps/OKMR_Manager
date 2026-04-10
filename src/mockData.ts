@@ -52,9 +52,4 @@ export const INITIAL_BOM: BOMItem[] = [
   { id: '2', name: 'Custom PCB Board v3', quantity: 2, unitPrice: 45, subtotal: 90, category: 'Electrical', status: 'Ordered' },
 ];
 
-export const INITIAL_USERS: User[] = [
-  { id: '1', name: 'Executive Admin', email: 'exec@ubcomarine.com', role: UserRole.EXECUTIVE, tags: ['Board', 'Safety Lead', 'Systems', 'VP Finance'], joinedAt: '2023-09-01', status: 'approved', onboardingCompleted: true, lastActive: new Date().toISOString() },
-  { id: '2', name: 'Jane Manager', email: 'manager@ubcomarine.com', role: UserRole.TEAM_MANAGER, tags: ['Electrical', 'Budget'], joinedAt: '2023-10-15', status: 'approved', onboardingCompleted: true, lastActive: new Date().toISOString() },
-  { id: '3', name: 'John Lead', email: 'lead@ubcomarine.com', role: UserRole.TEAM_LEAD, tags: ['Software', 'ROV-Alpha'], joinedAt: '2024-01-20', status: 'approved', onboardingCompleted: true, lastActive: new Date().toISOString() },
-  { id: '4', name: 'General Member', email: 'member@ubcomarine.com', role: UserRole.GENERAL_MEMBER, tags: ['Trainee'], joinedAt: '2024-03-05', status: 'approved', onboardingCompleted: true, lastActive: new Date().toISOString() },
-];
+export const INITIAL_USERS: User[] = [];

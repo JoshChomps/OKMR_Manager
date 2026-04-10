@@ -248,14 +248,16 @@ export const useHubState = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const fbUser = userCredential.user;
 
-      // Create a default local user object for the roster
+      // Create a valid local user object for the roster
       const newUser: User = {
         id: fbUser.uid,
         name: name,
         email: email,
-        role: UserRole.MEMBER,
+        role: UserRole.GENERAL_MEMBER,
         tags: ['New Member'],
-        status: 'Active',
+        status: 'pending',
+        joinedAt: new Date().toISOString(),
+        onboardingCompleted: false,
         lastActive: new Date().toISOString()
       };
 
